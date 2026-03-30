@@ -40,6 +40,18 @@ const SCHEDULE_CHECK_ALARM = 'focusguard-schedule-check';
 const CHECK_INTERVAL_MINUTES = 1;
 
 /**
+ * Active sessions tracker for content script data
+ * @type {Map<string, Object>}
+ */
+const activeSessions = new Map();
+
+/**
+ * Storage key for session analytics
+ * @constant {string}
+ */
+const SESSION_ANALYTICS_KEY = 'focusguard_session_analytics';
+
+/**
  * Initialize the extension on install/update
  */
 chrome.runtime.onInstalled.addListener(async (details) => {
@@ -258,6 +270,19 @@ async function handleMessage(message, sender, sendResponse) {
         sendResponse({ success: true });
         break;
         
+      // Content script message handlers
+      case 'contentHeartbeat':
+        handleContentHeartbeat(message.data, sender, sendResponse);
+        break;
+        
+      case 'sessionUpdate':
+        handleSessionUpdate(message.data, sender, sendResponse);
+        break;
+        
+      case 'distractionWarning':
+        handleDistractionWarning(message.data, sender, sendResponse);
+        break;
+        
       default:
         sendResponse({ success: false, error: 'Unknown action' });
     }
@@ -397,6 +422,175 @@ chrome.storage.onChanged.addListener(async (changes, namespace) => {
     await checkScheduleAndUpdateRules();
   }
 });
+
+// ========================================
+// Content Script Session Tracking
+// ========================================
+
+/**
+ * Handle content script heartbeat
+ * @param {Object} data - Heartbeat data
+ * @param {Object} sender - Message sender info
+ * @param {Function} sendResponse - Response callback
+ */
+function handleContentHeartbeat(data, sender, sendResponse) {
+  try {
+    const tabId = sender.tab?.id;
+    if (!tabId) {
+      sendResponse({ success: false, error: 'No tab ID' });
+      return;
+    }
+    
+    // Update or create session
+    activeSessions.set(tabId, {
+      domain: data.domain,
+      url: data.url,
+      lastHeartbeat: data.timestamp,
+      isActive: data.isActive
+    });
+    
+    sendResponse({ success: true });
+  } catch (error) {
+    console.error('FocusGuard: Heartbeat error:', error);
+    sendResponse({ success: false, error: error.message });
+  }
+}
+
+/**
+ * Handle session update from content script
+ * @param {Object} data - Session data
+ * @param {Object} sender - Message sender info
+ * @param {Function} sendResponse - Response callback
+ */
+async function handleSessionUpdate(data, sender, sendResponse) {
+  try {
+    // Store session analytics
+    await storeSessionAnalytics(data);
+    
+    // Remove from active sessions
+    const tabId = sender.tab?.id;
+    if (tabId) {
+      activeSessions.delete(tabId);
+    }
+    
+    sendResponse({ success: true });
+  } catch (error) {
+    console.error('FocusGuard: Session update error:', error);
+    sendResponse({ success: false, error: error.message });
+  }
+}
+
+/**
+ * Handle distraction warning from content script
+ * @param {Object} data - Warning data
+ * @param {Object} sender - Message sender info
+ * @param {Function} sendResponse - Response callback
+ */
+async function handleDistractionWarning(data, sender, sendResponse) {
+  try {
+    console.log('FocusGuard: Distraction warning for', data.domain, '-', data.minutesSpent, 'minutes');
+    
+    // Check if site is in blocked list
+    const blockedSites = await getBlockedSites();
+    const isBlockedSite = blockedSites.some(site => data.domain.includes(site) || site.includes(data.domain));
+    
+    if (isBlockedSite) {
+      console.log('FocusGuard: Warning shown on blocked site - user may be circumventing blocks');
+    }
+    
+    // Store warning event
+    await storeWarningEvent(data);
+    
+    sendResponse({ success: true });
+  } catch (error) {
+    console.error('FocusGuard: Distraction warning error:', error);
+    sendResponse({ success: false, error: error.message });
+  }
+}
+
+/**
+ * Store session analytics data
+ * @async
+ * @param {Object} sessionData - Session data from content script
+ */
+async function storeSessionAnalytics(sessionData) {
+  try {
+    const result = await chrome.storage.local.get(SESSION_ANALYTICS_KEY);
+    const analytics = result[SESSION_ANALYTICS_KEY] || { sessions: [] };
+    
+    // Add new session
+    analytics.sessions.push({
+      domain: sessionData.domain,
+      duration: sessionData.duration,
+      startTime: sessionData.startTime,
+      endTime: sessionData.endTime,
+      warningShown: sessionData.warningShown
+    });
+    
+    // Keep only last 100 sessions
+    if (analytics.sessions.length > 100) {
+      analytics.sessions = analytics.sessions.slice(-100);
+    }
+    
+    await chrome.storage.local.set({ [SESSION_ANALYTICS_KEY]: analytics });
+  } catch (error) {
+    console.error('FocusGuard: Failed to store session analytics:', error);
+  }
+}
+
+/**
+ * Store warning event
+ * @async
+ * @param {Object} warningData - Warning data
+ */
+async function storeWarningEvent(warningData) {
+  try {
+    const result = await chrome.storage.local.get(SESSION_ANALYTICS_KEY);
+    const analytics = result[SESSION_ANALYTICS_KEY] || { sessions: [], warnings: [] };
+    
+    if (!analytics.warnings) {
+      analytics.warnings = [];
+    }
+    
+    // Add warning event
+    analytics.warnings.push({
+      domain: warningData.domain,
+      minutesSpent: warningData.minutesSpent,
+      timestamp: Date.now(),
+      url: warningData.url
+    });
+    
+    // Keep only last 50 warnings
+    if (analytics.warnings.length > 50) {
+      analytics.warnings = analytics.warnings.slice(-50);
+    }
+    
+    await chrome.storage.local.set({ [SESSION_ANALYTICS_KEY]: analytics });
+  } catch (error) {
+    console.error('FocusGuard: Failed to store warning event:', error);
+  }
+}
+
+/**
+ * Get active sessions info
+ * @returns {Array} Array of active session info
+ */
+function getActiveSessions() {
+  const sessions = [];
+  const now = Date.now();
+  
+  for (const [tabId, session] of activeSessions.entries()) {
+    // Only include sessions with recent heartbeats (within 2 minutes)
+    if (now - session.lastHeartbeat < 120000) {
+      sessions.push({
+        tabId,
+        ...session
+      });
+    }
+  }
+  
+  return sessions;
+}
 
 // Log service worker startup
 console.log('FocusGuard: Service worker started');
