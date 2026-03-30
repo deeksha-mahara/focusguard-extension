@@ -1,0 +1,49 @@
+{
+  "manifest_version": 3,
+  "name": "FocusGuard",
+  "version": "1.0.0",
+  "description": "Stay focused by blocking distracting websites during your scheduled focus hours",
+  "permissions": [
+    "storage",
+    "declarativeNetRequest",
+    "alarms",
+    "tabs"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "background": {
+    "service_worker": "background/service-worker.js",
+    "type": "module"
+  },
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_icon": {
+      "16": "assets/icon-16.svg",
+      "32": "assets/icon-32.svg",
+      "48": "assets/icon-48.svg",
+      "128": "assets/icon-128.svg"
+    }
+  },
+  "declarative_net_request": {
+    "rule_resources": [
+      {
+        "id": "ruleset_1",
+        "enabled": true,
+        "path": "rules/rules.json"
+      }
+    ]
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["blocked/blocked.html", "assets/*"],
+      "matches": ["<all_urls>"]
+    }
+  ],
+  "icons": {
+    "16": "assets/icon-16.svg",
+    "32": "assets/icon-32.svg",
+    "48": "assets/icon-48.svg",
+    "128": "assets/icon-128.svg"
+  }
+}

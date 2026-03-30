@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stay Focused - FocusGuard</title>
+  <link rel="stylesheet" href="blocked.css">
+</head>
+<body>
+  <div class="container">
+    <!-- Background Pattern -->
+    <div class="bg-pattern"></div>
+    
+    <!-- Main Content -->
+    <main class="content">
+      <!-- Icon -->
+      <div class="icon-wrapper">
+        <div class="icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M12 6v6l4 2"/>
+          </svg>
+        </div>
+      </div>
+      
+      <!-- Title -->
+      <h1 class="title">Stay Focused</h1>
+      
+      <!-- Site Info -->
+      <div class="site-info">
+        <span class="site-label">You tried to visit</span>
+        <span class="site-name" id="blockedSite">a distracting website</span>
+      </div>
+      
+      <!-- Timer -->
+      <div class="timer-section">
+        <div class="timer-label">Focus time remaining</div>
+        <div class="timer-value" id="timeRemaining">--:--</div>
+      </div>
+      
+      <!-- Quote -->
+      <div class="quote-section">
+        <blockquote class="quote" id="motivationalQuote">
+          "The only way to do great work is to love what you do."
+        </blockquote>
+        <cite class="quote-author" id="quoteAuthor">- Steve Jobs</cite>
+      </div>
+      
+      <!-- Actions -->
+      <div class="actions">
+        <button class="btn btn-primary" id="backToWorkBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 14L4 9l5-5"/>
+            <path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5v0a5.5 5.5 0 0 1-5.5 5.5H11"/>
+          </svg>
+          Back to Work
+        </button>
+        
+        <div class="break-section">
+          <button class="btn btn-secondary" id="takeBreakBtn" disabled>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 3v18"/>
+              <path d="M8 21h8"/>
+              <path d="M8 3h8"/>
+              <path d="M6 8a6 6 0 0 1 12 0v4a6 6 0 0 1-12 0V8z"/>
+            </svg>
+            Take a 5 Min Break
+          </button>
+          <div class="cooldown-text" id="cooldownText"></div>
+        </div>
+      </div>
+      
+      <!-- Stats -->
+      <div class="stats">
+        <div class="stat">
+          <span class="stat-value" id="sitesBlocked">0</span>
+          <span class="stat-label">sites blocked today</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat">
+          <span class="stat-value" id="timeSaved">0m</span>
+          <span class="stat-label">time saved</span>
+        </div>
+      </div>
+    </main>
+    
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="footer-brand">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/>
+          <path d="M12 6v6l4 2"/>
+        </svg>
+        <span>FocusGuard</span>
+      </div>
+      <p>Protecting your productivity</p>
+    </footer>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast">
+    <span class="toast-message" id="toastMessage"></span>
+  </div>
+
+  <script type="module" src="blocked.js"></script>
+</body>
+</html>
