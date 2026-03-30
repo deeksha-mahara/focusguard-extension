@@ -8,6 +8,7 @@
 let storage = null;
 let utils = null;
 let stats = null;
+let suggestions = null;
 
 /**
  * Initialize popup
@@ -19,6 +20,7 @@ async function init() {
     storage = await import(chrome.runtime.getURL('background/storage.js'));
     utils = await import(chrome.runtime.getURL('background/utils.js'));
     stats = await import(chrome.runtime.getURL('background/stats.js'));
+    suggestions = await import(chrome.runtime.getURL('background/suggestions.js'));
     
     // Initialize theme
     await initTheme();
@@ -458,6 +460,58 @@ function renderBarChart(daysData) {
       <div class="chart-label ${isToday ? 'today' : ''}">${escapeHtml(label)}</div>
     `;
   }).join('');
+  
+  // Render smart insights after chart (fire and forget)
+  renderSmartInsights();
+}
+
+/**
+ * Render smart insights based on weekly analytics
+ * @async
+ */
+async function renderSmartInsights() {
+  try {
+    if (!suggestions || !stats) return;
+    
+    const insightsList = document.getElementById('insightsList');
+    const emptyState = document.getElementById('insightsEmptyState');
+    
+    // Get weekly stats
+    const weeklyStats = await stats.getWeeklyStats();
+    
+    // Generate suggestions
+    const suggestionList = await suggestions.generateSuggestions(weeklyStats);
+    
+    // Format suggestions for display
+    const formattedSuggestions = suggestionList.map(s => 
+      suggestions.formatSuggestionForDisplay(s)
+    );
+    
+    if (formattedSuggestions.length === 0) {
+      insightsList.innerHTML = '';
+      emptyState.style.display = 'block';
+      return;
+    }
+    
+    emptyState.style.display = 'none';
+    
+    // Render insight cards
+    insightsList.innerHTML = formattedSuggestions.map(suggestion => `
+      <div class="insight-card ${escapeHtml(suggestion.colorClass)}">
+        <div class="insight-icon">
+          ${suggestion.icon}
+        </div>
+        <div class="insight-content">
+          <div class="insight-title">${escapeHtml(suggestion.title)}</div>
+          <div class="insight-message">${escapeHtml(suggestion.message)}</div>
+          <div class="insight-action">${escapeHtml(suggestion.action)}</div>
+        </div>
+      </div>
+    `).join('');
+    
+  } catch (error) {
+    console.error('FocusGuard Popup: Render smart insights error:', error);
+  }
 }
 
 /**

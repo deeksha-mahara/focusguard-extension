@@ -833,3 +833,111 @@ body {
   color: var(--accent-warning);
   font-weight: 600;
 }
+
+/* ========================================
+   Smart Insights Styles
+   ======================================== */
+
+.section-title svg {
+  width: 20px;
+  height: 20px;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+.insights-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.insight-card {
+  background: var(--bg-secondary);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  padding: 16px;
+  display: flex;
+  gap: 12px;
+  transition: var(--transition);
+  animation: fadeIn 0.3s ease;
+}
+
+.insight-card:hover {
+  border-color: var(--accent-primary);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+.insight-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.insight-icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+/* Insight type colors */
+.insight-card.warning .insight-icon {
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--accent-danger);
+}
+
+.insight-card.info .insight-icon {
+  background: rgba(59, 130, 246, 0.1);
+  color: var(--accent-primary);
+}
+
+.insight-card.success .insight-icon {
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--accent-success);
+}
+
+.insight-card.primary .insight-icon {
+  background: rgba(139, 92, 246, 0.1);
+  color: #8b5cf6;
+}
+
+.insight-content {
+  flex: 1;
+}
+
+.insight-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.insight-message {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin-bottom: 8px;
+}
+
+.insight-action {
+  font-size: 12px;
+  color: var(--accent-primary);
+  font-weight: 500;
+  padding: 6px 10px;
+  background: rgba(59, 130, 246, 0.1);
+  border-radius: var(--radius-sm);
+  display: inline-block;
+}
+
+.insight-card.warning .insight-action {
+  color: var(--accent-danger);
+  background: rgba(239, 68, 68, 0.1);
+}
+
+.insight-card.success .insight-action {
+  color: var(--accent-success);
+  background: rgba(16, 185, 129, 0.1);
+}
