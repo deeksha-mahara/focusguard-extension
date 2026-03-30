@@ -91,9 +91,15 @@ async function removeAllFocusGuardRules() {
 function createBlockingRule(site, index) {
   const ruleId = RULE_ID_OFFSET + index;
   
-  // Create URL filter patterns for the site
-  const urlFilter = `*://${site}/*`;
-  const wwwUrlFilter = `*://www.${site}/*`;
+  // Normalize site - remove protocol and www if present
+  let normalizedSite = site.toLowerCase().trim();
+  normalizedSite = normalizedSite.replace(/^https?:\/\//, '');
+  normalizedSite = normalizedSite.replace(/^www\./, '');
+  normalizedSite = normalizedSite.split('/')[0]; // Remove path
+  
+  // Create URL filter that matches domain and all subdomains
+  // This will match: example.com, www.example.com, sub.example.com, etc.
+  const urlFilter = `*://*.${normalizedSite}/*`;
   
   return {
     id: ruleId,
