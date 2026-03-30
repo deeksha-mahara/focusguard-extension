@@ -10,14 +10,14 @@
   <div class="container" id="app">
     <!-- Header -->
     <header class="header">
-      <div class="logo">
-        <div class="logo-icon">
+      <div class="brand">
+        <div class="brand-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="12" cy="12" r="10"/>
             <path d="M12 6v6l4 2"/>
           </svg>
         </div>
-        <h1 class="logo-text">FocusGuard</h1>
+        <span class="brand-text">FocusGuard</span>
       </div>
       <button class="theme-toggle" id="themeToggle" title="Toggle theme">
         <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -30,14 +30,15 @@
       </button>
     </header>
 
-    <!-- Status Card -->
-    <div class="status-card" id="statusCard">
-      <div class="status-indicator" id="statusIndicator">
-        <div class="status-dot"></div>
-        <span class="status-text" id="statusText">Checking...</span>
+    <!-- Greeting & Status Section -->
+    <section class="greeting-section">
+      <h1 class="greeting" id="greetingText">Good morning</h1>
+      <p class="greeting-subtext" id="greetingSubtext">Ready to focus?</p>
+      <div class="status-pill" id="statusPill">
+        <span class="status-dot"></span>
+        <span id="statusText">Focus mode inactive</span>
       </div>
-      <div class="status-details" id="statusDetails"></div>
-    </div>
+    </section>
 
     <!-- Navigation Tabs -->
     <nav class="tabs">
@@ -67,35 +68,27 @@
     <!-- Sites Tab -->
     <div class="tab-content active" id="sitesTab">
       <div class="section">
-        <h2 class="section-title">Blocked Websites</h2>
-        <p class="section-desc">Add websites you want to block during focus hours</p>
+        <div class="section-header">
+          <div>
+            <h2 class="section-title">Blocked Sites</h2>
+            <p class="section-desc">Websites to block during focus time</p>
+          </div>
+        </div>
         
-        <div class="input-group">
+        <div class="input-wrapper">
           <input 
             type="text" 
             id="siteInput" 
             class="text-input" 
-            placeholder="e.g., facebook.com, twitter.com"
+            placeholder="e.g., youtube.com"
           >
-          <button class="btn btn-primary" id="addSiteBtn">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M12 5v14M5 12h14"/>
-            </svg>
-            Add
-          </button>
+          <div class="input-action">
+            <button class="btn btn-primary btn-sm" id="addSiteBtn">Add</button>
+          </div>
         </div>
         
-        <div class="sites-list" id="sitesList">
-          <!-- Sites will be populated here -->
-        </div>
-        
-        <div class="empty-state" id="sitesEmptyState">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <rect x="3" y="3" width="18" height="18" rx="2"/>
-            <path d="M3 9h18"/>
-          </svg>
-          <p>No websites blocked yet</p>
-          <span>Add sites above to get started</span>
+        <div class="sites-container" id="sitesList">
+          <div class="empty-tags" id="sitesEmptyState">No sites blocked yet</div>
         </div>
       </div>
     </div>
@@ -103,37 +96,39 @@
     <!-- Schedule Tab -->
     <div class="tab-content" id="scheduleTab">
       <div class="section">
-        <h2 class="section-title">Focus Schedule</h2>
-        <p class="section-desc">Set when FocusGuard should be active</p>
+        <div class="section-header">
+          <div>
+            <h2 class="section-title">Focus Schedule</h2>
+            <p class="section-desc">When to activate blocking</p>
+          </div>
+        </div>
         
         <div class="schedule-form">
-          <div class="time-inputs">
+          <div class="time-row">
             <div class="time-field">
-              <label>Start Time</label>
+              <label>Start</label>
               <input type="time" id="startTime" class="time-input" value="09:00">
             </div>
-            <div class="time-separator">to</div>
+            <span class="time-separator">to</span>
             <div class="time-field">
-              <label>End Time</label>
+              <label>End</label>
               <input type="time" id="endTime" class="time-input" value="17:00">
             </div>
           </div>
           
-          <div class="days-selector">
-            <label>Select Days</label>
-            <div class="days-grid">
-              <button class="day-btn" data-day="1">M</button>
-              <button class="day-btn" data-day="2">T</button>
-              <button class="day-btn" data-day="3">W</button>
-              <button class="day-btn" data-day="4">T</button>
-              <button class="day-btn" data-day="5">F</button>
-              <button class="day-btn" data-day="6">S</button>
-              <button class="day-btn" data-day="0">S</button>
-            </div>
+          <div class="days-label">Repeat on</div>
+          <div class="days-row">
+            <button class="day-chip" data-day="1">M</button>
+            <button class="day-chip" data-day="2">T</button>
+            <button class="day-chip" data-day="3">W</button>
+            <button class="day-chip" data-day="4">T</button>
+            <button class="day-chip" data-day="5">F</button>
+            <button class="day-chip" data-day="6">S</button>
+            <button class="day-chip" data-day="0">S</button>
           </div>
           
           <button class="btn btn-primary btn-full" id="addScheduleBtn">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
               <path d="M12 5v14M5 12h14"/>
             </svg>
             Add Schedule
@@ -141,16 +136,16 @@
         </div>
         
         <div class="schedules-list" id="schedulesList">
-          <!-- Schedules will be populated here -->
+          <!-- Schedules populated by JS -->
         </div>
         
-        <div class="empty-state" id="schedulesEmptyState">
+        <div class="empty-state" id="schedulesEmptyState" style="display: none;">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="12" cy="12" r="10"/>
             <path d="M12 6v6l4 2"/>
           </svg>
-          <p>No schedules set</p>
-          <span>Create a schedule to start blocking</span>
+          <p>No schedules</p>
+          <span>Create one to start blocking</span>
         </div>
       </div>
     </div>
@@ -159,38 +154,46 @@
     <div class="tab-content" id="statsTab">
       <!-- Today's Stats -->
       <div class="section">
-        <h2 class="section-title">Today's Stats</h2>
-        <p class="section-desc">Your productivity at a glance</p>
+        <div class="section-header">
+          <h2 class="section-title">Today</h2>
+        </div>
         
-        <div class="stats-grid">
+        <div class="stats-row">
           <div class="stat-card">
-            <div class="stat-icon sites-blocked">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="3" y="3" width="18" height="18" rx="2"/>
-                <path d="M3 9h18"/>
-              </svg>
+            <div class="stat-header">
+              <div class="stat-icon primary">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="3" width="18" height="18" rx="2"/>
+                  <path d="M3 9h18"/>
+                </svg>
+              </div>
+              <span class="stat-label-text">Blocked</span>
             </div>
             <div class="stat-value" id="sitesBlockedCount">0</div>
-            <div class="stat-label">Sites Blocked</div>
+            <div class="stat-subtext">attempts stopped</div>
           </div>
           
           <div class="stat-card">
-            <div class="stat-icon time-saved">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="10"/>
-                <path d="M12 6v6l4 2"/>
-              </svg>
+            <div class="stat-header">
+              <div class="stat-icon success">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"/>
+                  <path d="M12 6v6l4 2"/>
+                </svg>
+              </div>
+              <span class="stat-label-text">Saved</span>
             </div>
             <div class="stat-value" id="timeSavedValue">0m</div>
-            <div class="stat-label">Time Saved</div>
+            <div class="stat-subtext">of focused time</div>
           </div>
         </div>
       </div>
 
       <!-- Weekly Analytics -->
       <div class="section">
-        <h2 class="section-title">Weekly Analytics</h2>
-        <p class="section-desc">Last 7 days performance</p>
+        <div class="section-header">
+          <h2 class="section-title">This Week</h2>
+        </div>
         
         <div class="weekly-summary">
           <div class="weekly-stat">
@@ -198,47 +201,36 @@
             <span class="weekly-label">Total Blocks</span>
           </div>
           <div class="weekly-stat">
-            <span class="weekly-value" id="weeklyTimeSaved">0h 0m</span>
+            <span class="weekly-value" id="weeklyTimeSaved">0h</span>
             <span class="weekly-label">Time Saved</span>
           </div>
         </div>
 
-        <!-- Bar Chart -->
         <div class="chart-container">
-          <div class="chart-title">Daily Blocks</div>
+          <div class="chart-header">
+            <span class="chart-title">Daily Activity</span>
+            <div class="chart-legend">
+              <span class="chart-legend-dot"></span>
+              <span>Blocks</span>
+            </div>
+          </div>
           <div class="bar-chart" id="weeklyChart">
-            <!-- Bars will be populated by JS -->
+            <!-- Bars populated by JS -->
           </div>
           <div class="chart-labels" id="chartLabels">
-            <!-- Labels will be populated by JS -->
-          </div>
-        </div>
-
-        <div class="stats-info">
-          <div class="info-item">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="12" r="10"/>
-              <path d="M12 16v-4M12 8h.01"/>
-            </svg>
-            <span>Stats reset daily at midnight</span>
+            <!-- Labels populated by JS -->
           </div>
         </div>
       </div>
 
       <!-- Smart Insights -->
       <div class="section">
-        <h2 class="section-title">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M12 2L2 7l10 5 10-5-10-5z"/>
-            <path d="M2 17l10 5 10-5"/>
-            <path d="M2 12l10 5 10-5"/>
-          </svg>
-          Smart Insights
-        </h2>
-        <p class="section-desc">Personalized suggestions based on your behavior</p>
+        <div class="section-header">
+          <h2 class="section-title">Insights</h2>
+        </div>
         
         <div class="insights-list" id="insightsList">
-          <!-- Insights will be populated by JS -->
+          <!-- Insights populated by JS -->
         </div>
         
         <div class="empty-state" id="insightsEmptyState">
@@ -267,6 +259,15 @@
   <!-- Toast Notification -->
   <div class="toast" id="toast">
     <span class="toast-message" id="toastMessage"></span>
+  </div>
+
+  <!-- Legacy Status Card (hidden, for JS compatibility) -->
+  <div class="status-card" id="statusCard" style="display: none;">
+    <div class="status-indicator" id="statusIndicator">
+      <div class="status-dot"></div>
+      <span class="status-text" id="legacyStatusText">Checking...</span>
+    </div>
+    <div class="status-details" id="statusDetails"></div>
   </div>
 
   <script type="module" src="popup.js"></script>

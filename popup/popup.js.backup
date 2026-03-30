@@ -100,8 +100,8 @@ function setupEventListeners() {
     if (e.key === 'Enter') addSite();
   });
   
-  // Day selection - updated for day-chip class
-  document.querySelectorAll('.day-chip').forEach(btn => {
+  // Day selection
+  document.querySelectorAll('.day-btn').forEach(btn => {
     btn.addEventListener('click', () => toggleDaySelection(btn));
   });
   
@@ -262,7 +262,7 @@ async function addSchedule() {
     const startTime = document.getElementById('startTime').value;
     const endTime = document.getElementById('endTime').value;
     
-    const selectedDays = Array.from(document.querySelectorAll('.day-chip.selected'))
+    const selectedDays = Array.from(document.querySelectorAll('.day-btn.selected'))
       .map(btn => parseInt(btn.dataset.day));
     
     if (selectedDays.length === 0) {
@@ -285,7 +285,7 @@ async function addSchedule() {
     
     if (success) {
       // Reset form
-      document.querySelectorAll('.day-chip').forEach(btn => {
+      document.querySelectorAll('.day-btn').forEach(btn => {
         btn.classList.remove('selected');
       });
       
@@ -359,8 +359,8 @@ function renderSchedules(schedules) {
           <div class="schedule-time">${escapeHtml(schedule.startTime)} - ${escapeHtml(schedule.endTime)}</div>
           <div class="schedule-days">${escapeHtml(daysText)}</div>
         </div>
-        <button class="btn btn-ghost btn-sm" data-schedule-id="${escapeHtml(schedule.id)}" title="Remove">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+        <button class="btn btn-icon" data-schedule-id="${escapeHtml(schedule.id)}" title="Remove">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M18 6L6 18M6 6l12 12"/>
           </svg>
         </button>
@@ -369,7 +369,7 @@ function renderSchedules(schedules) {
   }).join('');
   
   // Add remove listeners
-  listEl.querySelectorAll('.btn-ghost').forEach(btn => {
+  listEl.querySelectorAll('.btn-icon').forEach(btn => {
     btn.addEventListener('click', () => removeSchedule(btn.dataset.scheduleId));
   });
 }
