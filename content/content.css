@@ -111,16 +111,33 @@
   color: #a8a29e;
 }
 
-/* Animation */
+/* Animation - Polished with bounce */
 @keyframes focusguard-slideIn {
-  from {
+  0% {
     opacity: 0;
-    transform: translateX(20px);
+    transform: translateX(30px) scale(0.95);
   }
-  to {
+  70% {
+    transform: translateX(-4px) scale(1.01);
+  }
+  100% {
     opacity: 1;
-    transform: translateX(0);
+    transform: translateX(0) scale(1);
   }
+}
+
+/* Pulse animation for icon */
+@keyframes focusguard-pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(79, 70, 229, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(79, 70, 229, 0);
+  }
+}
+
+#focusguard-warning .focusguard-warning-icon {
+  animation: focusguard-pulse 2s ease-in-out infinite;
 }
 
 /* Responsive adjustments */
